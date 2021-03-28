@@ -7,3 +7,8 @@
     ```bash
     $ taskset -c 0 ./test
     ```
+
+ - To run the program several times, we created and used the a bash script:
+    ```bash
+    $ ./run_several_times.sh <number of times> <path to file to save the results>
+    ```
