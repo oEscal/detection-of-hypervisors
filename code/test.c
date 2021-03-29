@@ -7,14 +7,12 @@ unsigned long first_one_bit(unsigned long word) {
 	return result;
 }
 
-unsigned long cpu() {
-	register unsigned long result;
+void cpu() {
+	int eax, ebx, ecx, edx;
 
-	asm volatile("cpuid"
-	:
-	:
-	);
-	return result;
+	asm volatile("movl $0, %%eax\n\tcpuid" 
+		: "=a" (eax),"=b" (ebx),"=c" (ecx),"=d" (edx)
+	); 
 }
 
 unsigned long rdtsc(void) {
