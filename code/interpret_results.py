@@ -1,4 +1,4 @@
-with open("results/vmware_intel.txt", "r") as file:
+with open("results/qemu_amd_2.txt", "r") as file:
    data = [int(i.split(" ")[2]) for i in file.readlines()[1:]]
 
 print(f"Minimum of clock cycles: {min(data)}")
