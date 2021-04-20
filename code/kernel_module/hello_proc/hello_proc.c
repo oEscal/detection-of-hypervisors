@@ -6,7 +6,7 @@
 #include <linux/seq_file.h>
 
 #define PROC_FILENAME "hello_proc"
-#define NUMBER_RUNS 100
+#define NUMBER_RUNS 100000
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("P. Escaleira");
@@ -50,6 +50,8 @@ static struct proc_ops options = {
 static int __init hello_init(void) {
 	unsigned long t0, t1;
 	int i;
+
+	printk(KERN_INFO "Start counting clock cicles\n");
 	for (i = 0; i < NUMBER_RUNS; i++) {
 		t0 = mine_rdtsc();
 		cpu();
@@ -57,6 +59,7 @@ static int __init hello_init(void) {
 
 		results[i] = t1 - t0;
 	}
+	printk(KERN_INFO "Done counting clock cicles\n");
 
 	pf = proc_create(PROC_FILENAME, 0444, 0, & options);
 

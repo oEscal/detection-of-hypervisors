@@ -12,3 +12,9 @@
     ```bash
     $ ./run_several_times.sh <number of times> <path to file to save the results>
     ```
+
+## Kernel mode
+
+```bash
+$ sudo insmod hello_proc.ko param_cpu_id=0
+```
