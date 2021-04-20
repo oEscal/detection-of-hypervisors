@@ -124,3 +124,48 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+
+
+### For kernel modules (from https://raw.githubusercontent.com/abperiasamy/rtl8812AU_8821AU_linux/31fcd8e769ebaf4c5349d45f360c25b4b3f464ef/.gitignore)
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+*.o.cmd
+*.ko.cmd
+.tmp_versions
+Module.symvers
+modules.order
+*.mod.c
+cscope.*
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+
