@@ -6,7 +6,7 @@
 #include <linux/seq_file.h>
 
 #define PROC_FILENAME "hello_proc"
-#define NUMBER_RUNS 100000
+#define NUMBER_RUNS 1
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("P. Escaleira");
@@ -28,16 +28,21 @@ static unsigned long mine_rdtsc(void) {
 	return (rdx << 32) + rax;
 }
 
+static unsigned long result;
 static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t count, loff_t * ppos) {
-	unsigned long t0, result;
-	t0 = mine_rdtsc();
-	cpu();
-	result = mine_rdtsc() - t0;
+	unsigned long t0;
 
-	if (*ppos >= NUMBER_RUNS) 
+	printk(KERN_INFO "%ld\n", result);
+	if (*ppos >= NUMBER_RUNS*4)
 		return 0;
 
-	if (copy_to_user(ubuf, &result, 1)) // Returns the number of bytes that could not be coppied
+	if (*ppos % 4 == 0) {
+		t0 = mine_rdtsc();
+        	cpu();
+	        result = mine_rdtsc() - t0;
+	}
+	char *res = (char *) &result;
+	if (copy_to_user(ubuf, res + (*ppos % 4), 1)) // Returns the number of bytes that could not be coppied
 		return -EFAULT;
 
 	*ppos += 1;
