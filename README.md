@@ -16,5 +16,4 @@
 ## Kernel mode
 
 ```bash
-$ sudo insmod hello_proc.ko param_cpu_id=0
 ```

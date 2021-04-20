@@ -14,7 +14,6 @@ MODULE_DESCRIPTION("An hello module");
 
 
 static struct proc_dir_entry * pf = 0;
-static unsigned long results[NUMBER_RUNS];
 
 static void cpu(void) {
 	int eax, ebx, ecx, edx;
@@ -30,12 +29,15 @@ static unsigned long mine_rdtsc(void) {
 }
 
 static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t count, loff_t * ppos) {
-	printk(KERN_INFO "proc read called on /proc/%s!\n", PROC_FILENAME);
+	unsigned long t0, result;
+	t0 = mine_rdtsc();
+	cpu();
+	result = mine_rdtsc() - t0;
 
 	if (*ppos >= NUMBER_RUNS) 
 		return 0;
 
-	if (copy_to_user(ubuf, results + *ppos, 1)) // Returns the number of bytes that could not be coppied
+	if (copy_to_user(ubuf, &result, 1)) // Returns the number of bytes that could not be coppied
 		return -EFAULT;
 
 	*ppos += 1;
@@ -48,20 +50,7 @@ static struct proc_ops options = {
 };
 
 static int __init hello_init(void) {
-	unsigned long t0, t1;
-	int i;
-
-	printk(KERN_INFO "Start counting clock cicles\n");
-	for (i = 0; i < NUMBER_RUNS; i++) {
-		t0 = mine_rdtsc();
-		cpu();
-		t1 = mine_rdtsc();
-
-		results[i] = t1 - t0;
-	}
-	printk(KERN_INFO "Done counting clock cicles\n");
-
-	pf = proc_create(PROC_FILENAME, 0444, 0, & options);
+	pf = proc_create(PROC_FILENAME, 0444, 0, &options);
 
 	if (pf == 0) {
 		printk(KERN_ALERT "Hello proc module cannot open /proc/%s!\n ", PROC_FILENAME);
