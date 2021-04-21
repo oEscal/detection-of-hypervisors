@@ -16,4 +16,8 @@
 ## Kernel mode
 
 ```bash
+$ make
+$ sudo rmmod hello_proc; sudo insmod hello_proc.ko 
+$ cat /proc/hello_proc > results
+$ python interpret_results.py
 ```

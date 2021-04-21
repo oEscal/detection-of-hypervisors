@@ -6,7 +6,7 @@
 #include <linux/seq_file.h>
 
 #define PROC_FILENAME "hello_proc"
-#define NUMBER_RUNS 1
+#define NUMBER_RUNS 1000000
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("P. Escaleira");
@@ -21,6 +21,13 @@ static void cpu(void) {
 	asm volatile("movl $0, %%eax\n\tcpuid": "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx));
 }
 
+static void sgdt_lgdt(void) {
+  static long mem_data[2];
+
+  asm volatile("sgdt %0" : "=m" (mem_data[0]));
+  asm volatile("lgdt %0" : : "m" (mem_data[0])); // falha em ring 3 (mas deve dar em ring 0)
+}
+
 static unsigned long mine_rdtsc(void) {
 	unsigned long rax, rcx, rdx;
 
@@ -29,10 +36,10 @@ static unsigned long mine_rdtsc(void) {
 }
 
 static unsigned long result;
+static char *result_char;
 static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t count, loff_t * ppos) {
 	unsigned long t0;
 
-	printk(KERN_INFO "%ld\n", result);
 	if (*ppos >= NUMBER_RUNS*4)
 		return 0;
 
@@ -40,9 +47,10 @@ static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t coun
 		t0 = mine_rdtsc();
         	cpu();
 	        result = mine_rdtsc() - t0;
+		printk(KERN_INFO "%ld\n", result);
+		result_char = (char *) &result;
 	}
-	char *res = (char *) &result;
-	if (copy_to_user(ubuf, res + (*ppos % 4), 1)) // Returns the number of bytes that could not be coppied
+	if (copy_to_user(ubuf, result_char + (*ppos % 4), 1)) // Returns the number of bytes that could not be coppied
 		return -EFAULT;
 
 	*ppos += 1;
