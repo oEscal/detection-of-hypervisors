@@ -54,7 +54,7 @@ static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t coun
 
 	if (*ppos % 4 == 0) {
 		t0 = mine_rdtsc();
-      rtc();
+      cpu();
 	   result = mine_rdtsc() - t0;
 		result_char = (char *) &result;
 	}
