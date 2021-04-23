@@ -2,7 +2,7 @@ import struct
 
 
 def main():
-   with open('results/host_amd_cpuid', 'rb') as file:
+   with open('results/qemu_amd_rtc', 'rb') as file:
       data = file.read()
    values = []
    for i in range(0, len(data), 4):
