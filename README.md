@@ -18,6 +18,6 @@
 ```bash
 $ make
 $ sudo rmmod hello_proc; sudo insmod hello_proc.ko 
-$ cat /proc/hello_proc > results
+$ taskset -c 0 cat /proc/hello_proc > results/host_amd
 $ python interpret_results.py
 ```

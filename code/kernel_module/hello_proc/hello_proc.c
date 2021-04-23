@@ -21,6 +21,15 @@ static void cpu(void) {
 	asm volatile("movl $0, %%eax\n\tcpuid": "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx));
 }
 
+static void rtc(void) {
+	int addr = 0x70;
+	int reg = 0;
+	int val;
+
+	asm volatile("outb %b[reg],%w[addr]" : : [reg] "a" (reg), [addr] "d" (addr) : "cc");
+	asm volatile("inb %w[addr],%b[val]" : [val] "=&a" (val) : [addr] "d" (addr+1) : "cc");
+}
+
 static void sgdt_lgdt(void) {
   static long mem_data[2];
 
@@ -45,9 +54,8 @@ static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t coun
 
 	if (*ppos % 4 == 0) {
 		t0 = mine_rdtsc();
-        	cpu();
-	        result = mine_rdtsc() - t0;
-		printk(KERN_INFO "%ld\n", result);
+      rtc();
+	   result = mine_rdtsc() - t0;
 		result_char = (char *) &result;
 	}
 	if (copy_to_user(ubuf, result_char + (*ppos % 4), 1)) // Returns the number of bytes that could not be coppied
@@ -84,3 +92,19 @@ static void __exit hello_exit(void) {
 
 module_init(hello_init);
 module_exit(hello_exit);
+
+
+/*
+#include <stdio.h>
+
+int main(void)
+{
+int addr = 0x70;
+int reg = 0;
+int val;
+
+asm volatile("outb %b[reg],%w[addr]" : : [reg] "r" (reg), [addr] "d" (addr) : "cc");
+asm volatile("inb %w[addr],%b[val]" : [val] "=&r" (val) : [addr] "d" (addr+1) : "cc");
+printf("%d\n",val);
+} 
+*/
