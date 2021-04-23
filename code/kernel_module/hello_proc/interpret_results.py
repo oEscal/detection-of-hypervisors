@@ -2,9 +2,8 @@ import struct
 
 
 def main():
-   with open('results/host_amd', 'rb') as file:
+   with open('results/qemu_amd', 'rb') as file:
       data = file.read()
-
    values = []
    for i in range(0, len(data), 4):
       values.append(struct.unpack('I', data[i:i + 4])[0])
