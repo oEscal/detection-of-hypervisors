@@ -1,8 +1,9 @@
+import argparse
 import struct
 
 
-def main():
-   with open('results/host_amd_xor', 'rb') as file:
+def main(args):
+   with open(f"results/{args.file}", 'rb') as file:
       data = file.read()
    values = []
    for i in range(0, len(data), 4):
@@ -16,4 +17,8 @@ def main():
 
 
 if __name__ == '__main__':
-   main()
+   parser = argparse.ArgumentParser()
+   parser.add_argument('--file', default="host_amd_xor", type=str, help="Result's file were to read from")
+   args = parser.parse_args()
+
+   main(args)
