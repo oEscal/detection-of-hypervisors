@@ -1,7 +1,16 @@
+typedef void (*assembly_instruction_function)(void); 
+
 unsigned long first_one_bit(unsigned long word) {
 	register unsigned long result;
 	asm volatile("bsfq %[data],%[result]": [result] "=r"(result): [data]   "r"(word));
 	return result;
+}
+
+static unsigned long rdtsc_assembly(void) {
+	unsigned long rax, rcx, rdx;
+
+	asm volatile("rdtscp": "=a"(rax), "=c"(rcx), "=d"(rdx));
+	return (rdx << 32) + rax;
 }
 
 static void cpuid_assembly(void) {
@@ -24,13 +33,6 @@ static void sgdt_lgdt_assembly(void) {
 
   asm volatile("sgdt %0" : "=m" (mem_data[0]));
   asm volatile("lgdt %0" : : "m" (mem_data[0])); // falha em ring 3 (mas deve dar em ring 0)
-}
-
-static unsigned long rdtsc_assembly(void) {
-	unsigned long rax, rcx, rdx;
-
-	asm volatile("rdtscp": "=a"(rax), "=c"(rcx), "=d"(rdx));
-	return (rdx << 32) + rax;
 }
 
 static void xor_assembly(void) {

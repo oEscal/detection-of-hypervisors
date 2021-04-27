@@ -4,14 +4,20 @@
 #include <linux/proc_fs.h>				// Required for accessing the /proc file system
 #include <linux/uaccess.h>				// Required for accessing the copy_to_user function
 #include <linux/seq_file.h>
+#include <linux/moduleparam.h>
 #include "../assembly_instructions.h"
 
-#define PROC_FILENAME "cicles_count"
+#define PROC_FILENAME "cicles_counter"
 #define NUMBER_RUNS 1000000
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("P. Escaleira");
-MODULE_DESCRIPTION("An hello module");
+MODULE_DESCRIPTION("Clock cicles counter module");
+
+
+static int instruction = 0;
+module_param(instruction, int, 0660);
+static const assembly_instruction_function instructions_set[] = {&cpuid_assembly, &rtc_assembly, &sgdt_lgdt_assembly, &xor_assembly};
 
 
 static struct proc_dir_entry * pf = 0;
@@ -22,17 +28,22 @@ static char *result_char;
 static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t count, loff_t * ppos) {
 	unsigned long t0;
 
+	if (instruction >= (sizeof(instructions_set)/sizeof(assembly_instruction_function)) 
+		|| instruction < 0) {
+		printk(KERN_ALERT "The instruction number given is outside the range of possible instructions.");
+		return 0;
+	}
+
+	if (*ppos == 0)
+		result_char = (char *) &result;
+
 	if (*ppos >= NUMBER_RUNS*4)
 		return 0;
 
 	if (*ppos % 4 == 0) {
 		t0 = rdtsc_assembly();
-      	//cpuid_assembly();
-			//rtc_assembly();
-			//sgdt_lgdt_assembly();
-			xor_assembly();
+		instructions_set[instruction];
 	   result = rdtsc_assembly() - t0;
-		result_char = (char *) &result;
 	}
 	if (copy_to_user(ubuf, result_char + (*ppos % 4), 1)) // Returns the number of bytes that could not be coppied
 		return -EFAULT;
@@ -68,19 +79,3 @@ static void __exit hello_exit(void) {
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-/*
-#include <stdio.h>
-
-int main(void)
-{
-int addr = 0x70;
-int reg = 0;
-int val;
-
-asm volatile("outb %b[reg],%w[addr]" : : [reg] "r" (reg), [addr] "d" (addr) : "cc");
-asm volatile("inb %w[addr],%b[val]" : [val] "=&r" (val) : [addr] "d" (addr+1) : "cc");
-printf("%d\n",val);
-} 
-*/

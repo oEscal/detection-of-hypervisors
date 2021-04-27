@@ -5,7 +5,7 @@
  - First, we just run a simple test for `cpuinfo` and mesure the time between the beginning and the end of the instruction. We also, for accuracy reasons, run our simple program on the same thread of the same CPU core (in this case, the one with the index 0), using the Linux command `taskset`:
     
     ```bash
-    $ taskset -c 0 ./test
+    $ taskset -c 0 ./main
     ```
 
  - To run the program several times, we created and used the a bash script:
@@ -17,7 +17,10 @@
 
 ```bash
 $ make
-$ sudo rmmod hello_proc; sudo insmod hello_proc.ko 
-$ taskset -c 0 cat /proc/hello_proc > results/host_amd
+$ sudo rmmod cicles_counter; sudo insmod cicles_counter.ko 
+$ taskset -c 0 cat /proc/cicles_counter > results/host_amd
 $ python interpret_results.py
 ```
+
+
+`https://devarea.com/linux-kernel-development-kernel-module-parameters/`
