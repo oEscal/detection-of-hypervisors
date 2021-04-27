@@ -16,4 +16,6 @@ for i in $(seq 0 $((${#INSTRUCTIONS[@]} - 1))); do
    echo "Running for the instruction <${INSTRUCTIONS[i]}> (id=$i)"
    echo "echo $i > /sys/module/cicles_counter/parameters/instruction" | sudo bash
    taskset -c 0 cat /proc/$MODULE_NAME > results/$2_${INSTRUCTIONS[i]}
+
+   python3 interpret_results.py $2_${INSTRUCTIONS[i]}
 done
