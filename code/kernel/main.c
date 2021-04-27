@@ -4,8 +4,9 @@
 #include <linux/proc_fs.h>				// Required for accessing the /proc file system
 #include <linux/uaccess.h>				// Required for accessing the copy_to_user function
 #include <linux/seq_file.h>
+#include "../assembly_instructions.h"
 
-#define PROC_FILENAME "hello_proc"
+#define PROC_FILENAME "cicles_count"
 #define NUMBER_RUNS 1000000
 
 MODULE_LICENSE("GPL");
@@ -15,40 +16,6 @@ MODULE_DESCRIPTION("An hello module");
 
 static struct proc_dir_entry * pf = 0;
 
-static void cpuid_assembly(void) {
-	int eax, ebx, ecx, edx;
-
-	asm volatile("movl $0, %%eax\n\tcpuid": "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx));
-}
-
-static void rtc_assembly(void) {
-	int addr = 0x70;
-	int reg = 0;
-	int val;
-
-	asm volatile("outb %b[reg],%w[addr]" : : [reg] "a" (reg), [addr] "d" (addr) : "cc");
-	asm volatile("inb %w[addr],%b[val]" : [val] "=&a" (val) : [addr] "d" (addr+1) : "cc");
-}
-
-static void sgdt_lgdt_assembly(void) {
-  static long mem_data[2];
-
-  asm volatile("sgdt %0" : "=m" (mem_data[0]));
-  asm volatile("lgdt %0" : : "m" (mem_data[0])); // falha em ring 3 (mas deve dar em ring 0)
-}
-
-static unsigned long rdtsc_assembly(void) {
-	unsigned long rax, rcx, rdx;
-
-	asm volatile("rdtscp": "=a"(rax), "=c"(rcx), "=d"(rdx));
-	return (rdx << 32) + rax;
-}
-
-static void xor_assembly(void) {
-	int eax;
-
-	asm volatile("movl 0x18, %%eax\n\txor 0x7575, %%eax": "=a"(eax));
-}
 
 static unsigned long result;
 static char *result_char;

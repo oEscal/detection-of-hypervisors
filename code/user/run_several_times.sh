@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BINARY_NAME=test
+BINARY_NAME=main
 
 echo $1 > $2
 

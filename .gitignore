@@ -169,3 +169,5 @@ cscope.*
 # Debug files
 *.dSYM/
 
+**/main
+

@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<assembly_instructions.h>
+#include <stdio.h>
+#include "../assembly_instructions.h"
 
 
 int main() {
