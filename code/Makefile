@@ -2,4 +2,4 @@ OBJ=test.c
 CFLAGS=-O2
 
 test: $(OBJ)
-	gcc $(CFLAGS) -o $@ $^
+	gcc $(CFLAGS) -I. -o $@ $^
