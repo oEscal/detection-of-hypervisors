@@ -9,7 +9,7 @@ from scipy.stats import norm, boxcox, binned_statistic
 TRESHOLD_RATIO = 0.00005
 AMBIENTS = ["host", "qemu", "vmware", "virtualbox"]
 INSTRUCTION = "cpuid"
-CPU = "amd"
+CPU = "intel"
 
 
 def boxcox_transformation(data, _lambda):
