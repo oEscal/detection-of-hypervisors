@@ -11,4 +11,4 @@ print(min(xor_data))
 print(min(instruction_data))
 
 print(f"Minimum of clock cycles: {min(instruction_data)/min(xor_data)}")
-print(f"\n\n\nMaximum of clock cycles: {max(instruction_data)/min(xor_data)}")
+print(f"Maximum of clock cycles: {max(instruction_data)/min(xor_data)}")
