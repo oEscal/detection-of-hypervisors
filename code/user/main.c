@@ -2,22 +2,26 @@
 #include "../assembly_instructions.h"
 
 
-const int counter = 100;
-const int NUMBER_TIMES = 1000000;
+const int COUNTER = 100;
 
-int main() {
+int main(int argc, char **argv) {
+	int number_times = 1000000;
 	unsigned long t0, t1, t2;
 
-	for (int n = 0; n < NUMBER_TIMES; n++) {
+	if (argc == 2) {
+      number_times = atoi(argv[1]);
+   }
+
+	for (int n = 0; n < number_times; n++) {
 		RDTSC_ASSEMBLY(t0)
 
-		for(int i = 0; i < counter; i++) {
+		for(int i = 0; i < COUNTER; i++) {
 			UNROLL_THOUSAND(XOR_ASSEMBLY())
 		}
 
 		RDTSC_ASSEMBLY(t1)
 
-		for (int i = 0; i < counter; i++) {
+		for (int i = 0; i < COUNTER; i++) {
 			CPUID_ASSEMBLY()
 		}
 
