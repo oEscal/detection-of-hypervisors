@@ -21,9 +21,8 @@ int main(int argc, char **argv) {
 
 		RDTSC_ASSEMBLY(t1)
 
-		for (int i = 0; i < COUNTER; i++) {
+		for (int i = 0; i < COUNTER; i++)
 			CPUID_ASSEMBLY()
-		}
 
 		RDTSC_ASSEMBLY(t2)
 
