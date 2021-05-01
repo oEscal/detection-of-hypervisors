@@ -33,8 +33,6 @@ def main():
          values.append(struct.unpack('I', data[i:i + 4])[0]/xor_min)
 
       print(f"Real ambient: {ambient}")
-      print(np.mean(values))
-      print(np.std(values))
       result = "host"
       probabilities = []
       for k in statistics:
@@ -42,7 +40,7 @@ def main():
             result = k
          probabilities.append(norm.pdf(np.mean(values), statistics[k][1], statistics[k][2]))
 
-      print(f"Guessed ambient with minimum: {result}\n\n\n")
+      print(f"Guessed ambient with minimum: {result}")
       print(f"Guessed ambient with normal distribution: {AMBIENTS[probabilities.index(max(probabilities))]}")
 
       print("****************************************************************\n\n\n")

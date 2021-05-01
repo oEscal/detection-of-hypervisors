@@ -21,7 +21,7 @@ module_param(instruction, int, 0660);
 static int number_runs = 1000000;
 module_param(number_runs, int, 0660);
 
-static const assembly_instruction_function INSTRUCTIONS_SET[] = {&cpuid_assembly, &rtc_assembly, &sgdt_lgdt_assembly, &xor_assembly};
+// static const assembly_instruction_function INSTRUCTIONS_SET[] = {&cpuid_assembly, &rtc_assembly, &sgdt_lgdt_assembly, &xor_assembly};
 
 static struct proc_dir_entry * pf = 0;
 
@@ -45,7 +45,8 @@ static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t coun
 
 	if (*ppos % 4 == 0) {
 		t0 = rdtsc_assembly();
-		INSTRUCTIONS_SET[instruction]();
+		// INSTRUCTIONS_SET[instruction]();
+		cpuid_assembly();
 	   result = rdtsc_assembly() - t0;
 	}
 	if (copy_to_user(ubuf, result_char + (*ppos % 4), 1)) // Returns the number of bytes that could not be coppied
