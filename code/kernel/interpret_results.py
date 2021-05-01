@@ -15,6 +15,9 @@ def main(args):
       current = struct.unpack('Q', data[i:i + 8])[0]
       instructions_values.append(current)
 
+   print(min(xor_values))
+   print(min(instructions_values))
+
    print(f"Minimum of clock cycles: {min(instructions_values)/min(xor_values)}")
    print(f"Maximum of clock cycles: {max(instructions_values)/min(xor_values)}")
 
