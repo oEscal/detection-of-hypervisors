@@ -1,15 +1,16 @@
 import argparse
-import struct
 
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm, boxcox, binned_statistic
 
+from utils import get_data_from_file
+
 
 TRESHOLD_RATIO = 0.00005
 AMBIENTS = ["host", "qemu", "vmware", "virtualbox"]
 INSTRUCTION = "cpuid"
-CPU = "amd"
+CPUS = ["amd", "intel"]
 
 
 def boxcox_transformation(data, _lambda):
@@ -86,31 +87,34 @@ def create_histogram(values, ambient):
    return min(values_set), mean, std, fitted_lambda, mean_bc, std_bc
 
 
+def histogram_multiple(xor_values, instruction_values):
+   width = 0.35
+   x = np.arange(len(AMBIENTS))
+   plt.bar(x - width/2, 
+      [min(instruction_values[CPUS[0]][k])/min(xor_values[CPUS[0]][k]) for k in xor_values[CPUS[0]]], width, label=CPUS[0])
+   plt.bar(x + width/2, 
+      [min(instruction_values[CPUS[1]][k])/min(xor_values[CPUS[1]][k]) for k in xor_values[CPUS[1]]], width, label=CPUS[1])
+   plt.axes().set_xticks(x)
+   plt.axes().set_xticklabels(AMBIENTS)
+   plt.show()
+
+
 def main():
-   means = []
-   for ambient in AMBIENTS:
-      with open(f"results/{ambient}_{CPU}_{INSTRUCTION}", 'rb') as file:
-         data = file.read()
-      values = []
-      for i in range(0, len(data), 4):
-         values.append(struct.unpack('I', data[i:i + 4])[0])
-
-      with open(f"results/{ambient}_{CPU}_xor", 'rb') as file:
-         data = file.read()
-      xor_min = max(values)
-      for i in range(0, len(data), 4):
-         current_xor = struct.unpack('I', data[i:i + 4])[0]
-         if current_xor < xor_min:
-            xor_min = current_xor
-
-      means.append(create_histogram([v/xor_min for v in values], ambient))
-
-   with open(f"means_{INSTRUCTION}.txt", 'w') as file:
-      for i in range(len(AMBIENTS)):
-         file.write(f"{AMBIENTS[i]}")
-         for m in means[i]:
-            file.write(f"\t{m}")
-         file.write("\n")
+   xor_values = {}
+   instruction_values = {}
+   for cpu in CPUS:
+      xor_values[cpu] = {}
+      instruction_values[cpu] = {}
+      for ambient in AMBIENTS:
+         xor_values[cpu][ambient], instruction_values[cpu][ambient] = get_data_from_file(f"{ambient}_{cpu}_{INSTRUCTION}")
+   histogram_multiple(xor_values, instruction_values)  
+   
+   # with open(f"means_{INSTRUCTION}.txt", 'w') as file:
+   #    for i in range(len(AMBIENTS)):
+   #       file.write(f"{AMBIENTS[i]}")
+   #       for m in means[i]:
+   #          file.write(f"\t{m}")
+   #       file.write("\n")
 
 
 if __name__ == '__main__':
