@@ -45,11 +45,11 @@ static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t coun
 	RDTSC_ASSEMBLY(t1)
 
 	for (i = 0; i < COUNTER; i++) {
-		#if defined RUN_CPUID
+		#if defined(RUN_CPUID)
 			CPUID_ASSEMBLY()
-		#elif defined RUN_RTC
+		#elif defined(RUN_RTC)
 			RTC_ASSEMBLY()
-		#elif defined RUN_LGDT
+		#elif defined(RUN_LGDT)
 			SGDT_LGDT_ASSEMBLY()
 		#endif
 	}
