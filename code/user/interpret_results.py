@@ -1,7 +1,7 @@
 instruction_data = []
 xor_data = []
 
-with open("results/host_amd.txt", "r") as file:
+with open("results/vmware_amd.txt", "r") as file:
    for l in file.readlines():
       current = l.split(" ")
       xor_data.append(int(current[0]))
