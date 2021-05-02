@@ -33,7 +33,7 @@ def histogram_multiple(xor_values, instruction_values, instruction, mode):
    ax.bar_label(bar0, padding=3)
    ax.bar_label(bar1, padding=3)
 
-   plt.title(f"Ratio between the instructions {instruction.upper()} and XOR in Kernel mode", fontsize=20)
+   plt.title(f"Minimum ratio between the instructions {instruction.upper()} and XOR in Kernel mode", fontsize=20)
    plt.xlabel("Virtualizer", fontsize=20)
    plt.ylabel("Ratio", fontsize=20)
    plt.yticks(fontsize=15)
@@ -53,8 +53,10 @@ def main(instruction, mode):
       xor_values[cpu] = {}
       instruction_values[cpu] = {}
       for ambient in AMBIENTS:
-         xor_values[cpu][ambient], instruction_values[cpu][ambient] = get_data_from_file(f"{ambient}_{cpu}_{instruction}")
-         if not instruction_values[cpu][ambient]:
+         try:
+            xor_values[cpu][ambient], instruction_values[cpu][ambient] = get_data_from_file(
+               f"{mode}/results/{ambient}_{cpu}_{instruction}", mode)
+         except Exception:
             instruction_values[cpu][ambient] = [0]
             xor_values[cpu][ambient] = [1]
    mins = histogram_multiple(xor_values, instruction_values, instruction, mode)  
