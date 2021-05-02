@@ -17,7 +17,7 @@ MODULE_DESCRIPTION("Clock cicles counter module");
 
 const int COUNTER = 100;
 
-static int number_runs = 1000000;
+static int number_runs = 10000;
 module_param(number_runs, int, 0660);
 
 static struct proc_dir_entry * pf = 0;
@@ -29,9 +29,8 @@ static ssize_t procfile_read(struct file * file, char __user * ubuf, size_t coun
 	unsigned long t0, t1, t2;
 	int i;
 
-	if (*ppos == 0) {
+	if (*ppos == 0)
 		result_char = (char *) &result;
-	}
 
 	if (*ppos >= number_runs)
 		return 0;

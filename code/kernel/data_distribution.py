@@ -9,7 +9,7 @@ from utils import get_data_from_file
 
 TRESHOLD_RATIO = 0.00005
 AMBIENTS = ["host", "qemu", "vmware", "virtualbox"]
-INSTRUCTION = "cpuid"
+INSTRUCTION = "rtc"
 CPUS = ["amd", "intel"]
 
 
@@ -89,13 +89,23 @@ def create_histogram(values, ambient):
 
 def histogram_multiple(xor_values, instruction_values):
    width = 0.35
+   fig, ax = plt.subplots()
+
    x = np.arange(len(AMBIENTS))
-   plt.bar(x - width/2, 
-      [min(instruction_values[CPUS[0]][k])/min(xor_values[CPUS[0]][k]) for k in xor_values[CPUS[0]]], width, label=CPUS[0])
-   plt.bar(x + width/2, 
-      [min(instruction_values[CPUS[1]][k])/min(xor_values[CPUS[1]][k]) for k in xor_values[CPUS[1]]], width, label=CPUS[1])
-   plt.axes().set_xticks(x)
-   plt.axes().set_xticklabels(AMBIENTS)
+   bar0 = ax.bar(x - width/2, 
+      [min(instruction_values[CPUS[0]][k])/min(xor_values[CPUS[0]][k]) for k in xor_values[CPUS[0]]], width, label=CPUS[0],
+      color='tab:orange')
+   bar1 = ax.bar(x + width/2, 
+      [min(instruction_values[CPUS[1]][k])/min(xor_values[CPUS[1]][k]) for k in xor_values[CPUS[1]]], width, label=CPUS[1],
+      color='tab:blue')
+   
+   ax.set_xticks(x)
+   ax.set_xticklabels(AMBIENTS)
+   ax.legend()
+
+   ax.bar_label(bar0, padding=3)
+   ax.bar_label(bar1, padding=3)
+
    plt.show()
 
 
