@@ -7,9 +7,10 @@ from utils import get_data_from_file
 
 
 AMBIENTS = ["host", "qemu", "vmware", "virtualbox", "hyperv"]
+ERROR = 0.1
 
 
-def main(instruction, mode, cpu, number_runs):
+def main(instruction, mode, cpu, number_runs, verbose=False):
    mins = {}
 
    if mode == "kernel":
@@ -26,20 +27,40 @@ def main(instruction, mode, cpu, number_runs):
 
    min_measured = min(instruction_values)/min(xor_values)
 
-   result = list(mins[cpu].keys())[0]
+   if verbose:
+      print("\n\n\n*****************************************************************************************")
+      print(f"{'Minimum obtained:':50s}{min_measured:3.7f}\n")
+
+   result = ''
    for ambient in mins[cpu]:
-      if min_measured >= mins[cpu][ambient] and (min_measured - mins[cpu][ambient]) < (min_measured - mins[cpu][result]):
+      current_distance = abs(min_measured - mins[cpu][ambient])
+
+      if verbose:
+         to_print = f"Distance to resuts from <{ambient}>:"
+         print(f"{to_print:50s}{current_distance:3.7f}", end='\t')
+      
+      if result not in mins[cpu] or current_distance < abs(min_measured - mins[cpu][result]):
          result = ambient
 
-   print(f"Ambient detected using the data from the CPU {cpu} with the instruction {instruction.upper()} in {mode} mode: <{result}>")
+         if verbose:
+            print(f"{'HIT':>10}", end='')
+
+      if verbose:
+         print()
+   
+   if verbose:
+      print("*****************************************************************************************\n\n\n")
+
+   print(f"Ambient detected using the data from the {cpu} CPU with the instruction {instruction.upper()} in {mode} mode:\t{result}")
 
 
 if __name__ == '__main__':
    parser = argparse.ArgumentParser()
    parser.add_argument('--instruction', default="cpuid", type=str, help=f"Instruction: one of [cpuid, rtc, lgdt]")
-   parser.add_argument('--mode', default="kernel", type=str, help="Mode: one of [kernel, user]")
+   parser.add_argument('--mode', default="user", type=str, help="Mode: one of [kernel, user]")
    parser.add_argument('--cpu', default="amd", type=str, help="Use the data obtained from the given CPU brand: one of [amd, intel]")
    parser.add_argument('--runs', default=10000, type=int, help="Number of times to run the instructions")
+   parser.add_argument('--verbose', default=False, type=bool, help="All output")
    args = parser.parse_args()
 
-   main(args.instruction, args.mode, args.cpu, args.runs)
+   main(args.instruction, args.mode, args.cpu, args.runs, args.verbose)
