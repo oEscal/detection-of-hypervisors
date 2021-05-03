@@ -3,20 +3,10 @@
 
 MODULE_NAME=cicles_counter
 INSTRUCTIONS=("cpuid" "rtc" "lgdt")
-MACROS=("RUN_CPUID" "RUN_RTC" "RUN_LGDT")
 
 
 for i in $(seq 0 $((${#INSTRUCTIONS[@]} - 1))); do
-   echo "#define ${MACROS[i]} 1" > to_run.h
-   
-   # clean, build and install the kernel module
-   make clean &> /dev/null
-   make &> /dev/null
-   sudo rmmod $MODULE_NAME &> /dev/null
-   sudo insmod $MODULE_NAME.ko
-
-   # tell the module how many times to run the instruction
-   echo "echo $1 > /sys/module/$MODULE_NAME/parameters/number_runs" | sudo bash
+   bash compile_for_instruction.sh ${INSTRUCTIONS[i]} $1
 
    echo "************************************************************************"
    echo "Running for <${INSTRUCTIONS[i]}>"

@@ -5,7 +5,7 @@
 const int COUNTER = 100;
 
 int main(int argc, char **argv) {
-	int number_times = 1000000;
+	int number_times = 10000;
 	unsigned long t0, t1, t2;
 
 	if (argc == 2) {

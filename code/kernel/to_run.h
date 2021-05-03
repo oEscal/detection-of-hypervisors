@@ -1,1 +1,1 @@
-#define RUN_LGDT 1
+#define RUN_CPUID 1
