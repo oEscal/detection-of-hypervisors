@@ -18,9 +18,9 @@ def main(instruction, mode, cpu, number_runs, verbose=False):
       xor_values, instruction_values = get_data_from_file('/proc/cicles_counter', 'kernel')
    elif mode == "user":
       file = uuid.uuid4()
-      os.system(f"cd {mode}; make &> /dev/null; ./main {number_runs} > {file}.txt")
-      xor_values, instruction_values = get_data_from_file(f"{mode}/{file}", 'user')
-      os.system(f"rm {mode}/{file}.txt")
+      os.system(f"cd {mode}; bash run.sh {number_runs} {file}.txt")
+      xor_values, instruction_values = get_data_from_file(f"{mode}/results/{file}", 'user')
+      os.system(f"rm {mode}/results/{file}.txt")
 
    with open(f"mins/{instruction}_{mode}", 'rb') as file:
       mins = pickle.loads(file.read())
@@ -29,7 +29,7 @@ def main(instruction, mode, cpu, number_runs, verbose=False):
 
    if verbose:
       print("\n\n\n*****************************************************************************************")
-      print(f"{'Minimum obtained:':50s}{min_measured:3.7f}\n")
+      print(f"{'Minimum obtained on this execution:':50s}{min_measured:3.7f}\n")
 
    result = ''
    for ambient in mins[cpu]:
